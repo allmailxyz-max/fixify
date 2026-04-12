@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Fixify — Home Services Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#020B16;--surf1:#061220;--surf2:#0A1B2E;--card:rgba(8,22,40,0.92);
+  --glass:rgba(255,255,255,0.03);--border:rgba(0,212,255,0.15);
+  --bw:rgba(255,255,255,0.07);--bh:rgba(255,255,255,0.13);
+  --cyan:#00D4FF;--cdim:rgba(0,212,255,0.11);
+  --purple:#7B2FFF;--pdim:rgba(123,47,255,0.12);
+  --green:#00E5A0;--gdim:rgba(0,229,160,0.1);
+  --orange:#FF6B35;--red:#FF3860;--amber:#FFB547;
+  --tx:#fff;--txs:rgba(255,255,255,0.62);--txm:rgba(255,255,255,0.33);
+  --g1:linear-gradient(135deg,#00D4FF,#7B2FFF);
+  --g2:linear-gradient(135deg,#00E5A0,#00D4FF);
+  --g3:linear-gradient(135deg,#FF6B35,#FF3860);
+  --g4:linear-gradient(135deg,#7B2FFF,#FF3860);
+  --g5:linear-gradient(135deg,#FFB547,#FF6B35);
+  --fh:'Exo 2','Rajdhani',system-ui,sans-serif;
+  --fb:'Outfit','Nunito',system-ui,sans-serif;
+}
+body{background:var(--bg);color:var(--tx);font-family:var(--fb);min-height:100vh;overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,212,255,.2);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,212,255,.4)}
+
+/* Keyframes */
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,229,160,.45)}50%{box-shadow:0 0 0 7px rgba(0,229,160,0)}}
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes scan{0%{transform:translateX(-100%)}100%{transform:translateX(200%)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes progress{from{width:0}to{width:var(--pw)}}
+@keyframes glow{0%,100%{opacity:.3}50%{opacity:.9}}
+
+/* Layout */
+#app{display:flex;height:100vh;position:relative;z-index:1}
+.glow-bg{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0}
+
+/* Sidebar */
+#sidebar{
+  width:240px;flex-shrink:0;background:var(--surf1);
+  border-right:1px solid var(--bw);display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;position:relative;z-index:2;
+}
+.logo-wrap{padding:24px 22px 20px;border-bottom:1px solid var(--bw)}
+.logo-text{font-family:var(--fh);font-weight:900;font-size:26px;letter-spacing:.12em;
+  background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{color:var(--txm);font-size:9px;letter-spacing:.2em;margin-top:4px;font-weight:600}
+.user-card{padding:14px 18px;border-bottom:1px solid var(--bw);display:flex;gap:10px;align-items:center}
+nav{padding:12px 10px;flex:1}
+.nav-item{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;
+  border-radius:12px;cursor:pointer;margin-bottom:3px;
+  color:var(--txs);font-weight:500;font-size:13px;
+  border-left:3px solid transparent;transition:all .2s;user-select:none;
+}
+.nav-item:hover{background:rgba(0,212,255,.07);color:var(--cyan)}
+.nav-item.active{background:rgba(0,212,255,.1);color:var(--cyan);font-weight:700;border-left-color:var(--cyan)}
+.nav-item .badge{margin-left:auto;background:var(--red);border-radius:10px;padding:1px 7px;font-size:10px;font-weight:800;color:#fff}
+.nav-bottom{padding:14px 18px;border-top:1px solid var(--bw);display:flex;gap:8px}
+.nav-bottom-btn{width:34px;height:34px;border-radius:10px;cursor:pointer;background:var(--glass);border:1px solid var(--bw);display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s}
+.nav-bottom-btn:hover{border-color:var(--cyan)}
+
+/* Main */
+#main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+#topbar{
+  padding:20px 32px;border-bottom:1px solid var(--bw);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--surf1);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:10;flex-shrink:0;
+}
+#topbar h1{font-family:var(--fh);font-weight:800;font-size:22px;color:var(--tx)}
+#topbar p{margin:3px 0 0;font-size:13px;color:var(--txm)}
+.topbar-right{display:flex;gap:10px;align-items:center}
+.icon-btn{width:38px;height:38px;border-radius:12px;background:var(--glass);border:1px solid var(--bw);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;position:relative;transition:all .2s;flex-shrink:0}
+.icon-btn:hover{border-color:var(--cyan)}
+.notif-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--red)}
+#content{flex:1;overflow-y:auto}
+.screen{animation:fade-up .3s ease both}
+
+/* Cards */
+.gcard{background:var(--card);backdrop-filter:blur(20px);border:1px solid var(--bw);border-radius:16px;padding:20px;transition:all .25s}
+.gcard.hoverable:hover{border-color:rgba(0,212,255,.35);transform:translateY(-2px);box-shadow:0 8px 40px rgba(0,212,255,.08)}
+.gcard.clickable{cursor:pointer}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:12px;color:#fff;font-family:var(--fb);font-weight:700;cursor:pointer;letter-spacing:.02em;transition:all .2s;font-size:14px;padding:11px 22px}
+.btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.btn:active{transform:translateY(0);filter:brightness(.95)}
+.btn-sm{padding:7px 16px;font-size:12px;border-radius:10px}
+.btn-g1{background:var(--g1)}
+.btn-g2{background:var(--g2)}
+.btn-g3{background:var(--g3)}
+.btn-g4{background:var(--g4)}
+.btn-ghost{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.44);border-radius:12px;color:var(--cyan);font-family:var(--fb);font-weight:700;cursor:pointer;padding:11px 22px;font-size:14px;transition:all .2s}
+.btn-ghost:hover{background:rgba(0,212,255,.18);border-color:rgba(0,212,255,.7)}
+.btn-ghost-sm{padding:7px 16px;font-size:12px;border-radius:10px}
+.btn-danger{background:rgba(255,56,96,.1);border:1px solid rgba(255,56,96,.4);color:var(--red);font-family:var(--fb);font-weight:700;cursor:pointer;border-radius:11px;padding:10px 0;font-size:13px;transition:all .2s}
+.btn-danger:hover{background:rgba(255,56,96,.2)}
+.btn-success{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.4);color:var(--green);font-family:var(--fb);font-weight:700;cursor:pointer;border-radius:11px;padding:10px 0;font-size:13px;transition:all .2s}
+.btn-success:hover{background:rgba(0,229,160,.2)}
+.btn-full{width:100%}
+
+/* Pills */
+.pill{display:inline-flex;align-items:center;gap:3px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.04em;white-space:nowrap}
+
+/* Avatar */
+.avatar{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--fh);border:2px solid var(--bw);flex-shrink:0;position:relative}
+.online-dot{position:absolute;border-radius:50%;background:var(--green);border:2px solid var(--surf1);animation:pulse 2s infinite}
+.offline-dot{position:absolute;border-radius:50%;background:var(--txm);border:2px solid var(--surf1)}
+
+/* Inputs */
+.inp{background:var(--glass);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--tx);font-family:var(--fb);font-size:13px;width:100%;transition:border-color .2s}
+.inp:focus{outline:none;border-color:var(--cyan)}
+.inp::placeholder{color:var(--txm)}
+textarea.inp{resize:none;line-height:1.65}
+
+/* Stars */
+.stars{display:flex;gap:1px}
+.star{font-size:13px}
+
+/* Toggle */
+.toggle{width:48px;height:26px;border-radius:13px;position:relative;cursor:pointer;transition:all .3s;flex-shrink:0}
+.toggle-thumb{position:absolute;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:left .3s;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+
+/* Divider */
+.div{height:1px;background:var(--bw);margin:16px 0}
+
+/* Grid helpers */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+.g4s{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.g3a{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.flex{display:flex;align-items:center;gap:10px}
+.flex-col{display:flex;flex-direction:column;gap:12px}
+.spacer{flex:1}
+
+/* Tabs */
+.tab-bar{display:flex;gap:6px;border-bottom:1px solid var(--bw);padding:20px 32px 0}
+.tab-btn{padding:11px 22px;border-radius:12px 12px 0 0;border:none;background:transparent;border-top:2px solid transparent;color:var(--txs);font-family:var(--fb);font-weight:700;font-size:13px;cursor:pointer;transition:all .2s}
+.tab-btn.active{background:var(--card);border-top-color:var(--cyan);color:var(--cyan)}
+.tab-btn:not(.active):hover{color:var(--cyan)}
+
+/* Section heading */
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sh-title{font-family:var(--fh);font-weight:700;font-size:15px;color:var(--tx);letter-spacing:.02em}
+.sh-title.lg{font-size:20px}
+.sh-action{font-size:13px;color:var(--cyan);cursor:pointer;font-weight:600}
+
+/* Hero banner */
+.hero{margin:28px 32px 24px;border-radius:24px;padding:40px 44px;position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(0,212,255,.07),rgba(123,47,255,.14));border:1px solid var(--border)}
+.hero-scan{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,212,255,.4),transparent);animation:scan 4s linear infinite}
+
+/* Worker card */
+.worker-card{padding:18px 20px}
+.worker-card:hover{border-color:rgba(0,212,255,.35)!important;box-shadow:0 8px 40px rgba(0,212,255,.08)!important}
+
+/* Chat bubbles */
+.bubble-me{background:var(--g1);border-radius:18px 18px 4px 18px;padding:12px 16px;color:#fff;font-size:14px;line-height:1.55;max-width:70%;align-self:flex-end;white-space:pre-wrap}
+.bubble-them{background:var(--card);border:1px solid var(--bw);border-radius:18px 18px 18px 4px;padding:12px 16px;color:#fff;font-size:14px;line-height:1.55;max-width:70%;align-self:flex-start;white-space:pre-wrap}
+.bubble-sys{text-align:center;background:rgba(0,212,255,.1);border-radius:10px;padding:9px 16px;font-size:12px;color:var(--cyan);border:1px solid var(--border);align-self:stretch}
+
+/* Map grid bg */
+.map-grid{background-image:linear-gradient(var(--bw) 1px,transparent 1px),linear-gradient(90deg,var(--bw) 1px,transparent 1px);background-size:50px 50px}
+
+/* Progress bar */
+.prog-track{height:6px;background:var(--bw);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width .8s ease}
+
+/* Animations for special elements */
+.float{animation:float 3s ease-in-out infinite}
+.pulse-online{animation:pulse 2s infinite}
+
+/* Category card */
+.cat-card{background:var(--glass);border:1px solid var(--bw);border-radius:16px;padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;transition:all .22s}
+.cat-card:hover{transform:translateY(-3px) scale(1.02);border-color:rgba(255,255,255,.18)}
+
+/* Step tracker */
+.step-line{width:2px;height:28px;margin:4px auto;border-radius:2px;background:var(--g2)}
+.step-line.inactive{background:var(--bw)}
+
+/* Price quick select */
+.price-quick{flex:1;padding:10px 0;border-radius:11px;text-align:center;cursor:pointer;font-size:14px;font-weight:700;border:1px solid var(--bw);background:var(--glass);color:var(--txs);transition:all .2s}
+.price-quick:hover,.price-quick.sel{background:var(--cdim);border-color:var(--cyan);color:var(--cyan)}
+
+/* Bar chart bar */
+.bar{border-radius:6px 6px 0 0;transition:height .6s ease;border-bottom:none}
+
+/* Responsive badge */
+.urgency-badge{padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;background:rgba(255,181,71,.18);border:1px solid rgba(255,181,71,.45);color:var(--amber)}
+</style>
+</head>
+<body>
+
+<!-- Ambient glows -->
+<div class="glow-bg" style="top:-100px;left:200px;width:500px;height:500px;background:rgba(0,212,255,.03)"></div>
+<div class="glow-bg" style="bottom:-100px;right:200px;width:400px;height:400px;background:rgba(123,47,255,.04)"></div>
+
+<div id="app">
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="logo-wrap">
+      <div class="logo-text">FIXIFY</div>
+      <div class="logo-sub">HOME SERVICES PLATFORM</div>
+    </div>
+    <div class="user-card">
+      <div id="sidebar-avatar"></div>
+      <div>
+        <div style="font-size:13px;font-weight:700;color:var(--tx)">Arjun Dev</div>
+        <div style="font-size:11px;color:var(--txm)">📍 Meerut, UP</div>
+      </div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="nav-bottom">
+      <div class="nav-bottom-btn">⚙️</div>
+      <div class="nav-bottom-btn">🌙</div>
+      <div class="nav-bottom-btn">❓</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div id="main">
+    <div id="topbar">
+      <div>
+        <h1 id="page-title">Home</h1>
+        <p id="page-sub">Welcome back, Arjun</p>
+      </div>
+      <div class="topbar-right">
+        <div id="topbar-actions"></div>
+        <div class="icon-btn">🔔<div class="notif-dot"></div></div>
+        <div id="topbar-avatar"></div>
+      </div>
+    </div>
+    <div id="content"></div>
+  </div>
+</div>
+
+<script>
+/* ── State ─────────────────────────────────────── */
+const state = {
+  screen: 'Home',
+  chatMsg: '',
+  bookDate: 15, bookTime: '10:00 AM', bookUrgent: false,
+  payMethod: 'upi', payDone: false,
+  negStage: 'offer', negCounter: '380',
+  stars: 5, reviewTxt: '', reviewTags: new Set(['On Time','Professional','Expert']),
+  workerTab: 'about', workerSel: 0,
+  dashTab: 'jobs', dashAvail: true,
+  adminTab: 'overview',
+  catFilter: 'all',
+};
+
+/* ── Design Tokens ─────────────────────────────── */
+const C = {
+  cyan:'#00D4FF',purple:'#7B2FFF',green:'#00E5A0',red:'#FF3860',amber:'#FFB547',orange:'#FF6B35',
+  g1:'linear-gradient(135deg,#00D4FF,#7B2FFF)',
+  g2:'linear-gradient(135deg,#00E5A0,#00D4FF)',
+  g3:'linear-gradient(135deg,#FF6B35,#FF3860)',
+  g4:'linear-gradient(135deg,#7B2FFF,#FF3860)',
+  g5:'linear-gradient(135deg,#FFB547,#FF6B35)',
+};
+
+/* ── Data ─────────────────────────────────────── */
+const CATS = [
+  {id:'pl',label:'Plumbing',em:'🔧',col:C.cyan,desc:'Leak, pipe, drainage'},
+  {id:'el',label:'Electrical',em:'⚡',col:C.amber,desc:'Wiring, switches, boards'},
+  {id:'cl',label:'Cleaning',em:'🧹',col:C.green,desc:'Home, sofa, deep clean'},
+  {id:'ac',label:'AC Repair',em:'❄️',col:C.purple,desc:'Service, gas filling'},
+  {id:'ca',label:'Carpentry',em:'🪚',col:C.orange,desc:'Furniture, doors, fix'},
+  {id:'pa',label:'Painting',em:'🖌️',col:C.red,desc:'Interior, exterior'},
+  {id:'pe',label:'Pest Control',em:'🐛',col:C.cyan,desc:'Termite, cockroach'},
+  {id:'ga',label:'Gardening',em:'🌿',col:C.green,desc:'Lawn, plants, trim'},
+];
+
+const WORKERS = [
+  {id:0,name:'Rajesh Kumar',cat:'Plumber',rating:4.9,jobs:312,price:'₹200–500',online:true,exp:8,v:true,grad:C.g1,city:'Meerut'},
+  {id:1,name:'Priya Sharma',cat:'Cleaner',rating:4.8,jobs:567,price:'₹150–350',online:true,exp:5,v:true,grad:C.g2,city:'Meerut'},
+  {id:2,name:'Amit Singh',cat:'Electrician',rating:4.7,jobs:234,price:'₹300–800',online:false,exp:10,v:true,grad:C.g4,city:'Delhi NCR'},
+  {id:3,name:'Meena Patel',cat:'Painter',rating:4.6,jobs:189,price:'₹250–600',online:true,exp:6,v:false,grad:C.g3,city:'Meerut'},
+  {id:4,name:'Suresh Yadav',cat:'Carpenter',rating:4.8,jobs:423,price:'₹400–1200',online:true,exp:12,v:true,grad:C.g5,city:'Agra'},
+  {id:5,name:'Kavita Joshi',cat:'AC Repair',rating:4.9,jobs:198,price:'₹500–1500',online:false,exp:7,v:true,grad:C.g4,city:'Noida'},
+];
+
+const NAV_ITEMS = [
+  {id:'Home',em:'🏠',lbl:'Home'},
+  {id:'Workers',em:'👷',lbl:'Browse Workers'},
+  {id:'Chat',em:'💬',lbl:'Messages',badge:3},
+  {id:'Booking',em:'📅',lbl:'Book Service'},
+  {id:'Tracking',em:'📍',lbl:'Track Order'},
+  {id:'Payment',em:'💳',lbl:'Payment'},
+  {id:'Negotiation',em:'🤝',lbl:'Negotiation'},
+  {id:'Rating',em:'⭐',lbl:'Reviews'},
+  {id:'Dashboard',em:'⚡',lbl:'Worker Dashboard'},
+  {id:'Admin',em:'🛡️',lbl:'Admin Panel'},
+];
+
+const META = {
+  Home:{title:'Home',sub:'Welcome back, Arjun 👋'},
+  Workers:{title:'Browse Workers',sub:'Find verified professionals near you'},
+  Chat:{title:'Messages',sub:'Chat with your service workers'},
+  Booking:{title:'Book a Service',sub:'Schedule at your convenience'},
+  Tracking:{title:'Order Tracking',sub:'Live status of your booking #HS-2026-1847'},
+  Payment:{title:'Secure Payment',sub:'Escrow-protected — payment held until job is done'},
+  Negotiation:{title:'Price Negotiation',sub:'Agree on the best price with your worker'},
+  Rating:{title:'Rate & Review',sub:'Share your experience to help others'},
+  Dashboard:{title:'Worker Dashboard',sub:'Manage jobs, earnings & profile'},
+  Admin:{title:'Admin Panel',sub:'Platform overview & controls'},
+};
+
+const MSGS = [
+  {from:'w',txt:'Hello! I\'m Rajesh. How can I help you today? 😊',t:'2:20 PM'},
+  {from:'u',txt:'Hi! I have a pipe leak under my kitchen sink 🚿',t:'2:21 PM'},
+  {from:'w',txt:'I see! Can you share a photo of the problem area?',t:'2:22 PM'},
+  {from:'sys',txt:'📸 Photo uploaded — AI detected: Minor pipe joint leak detected'},
+  {from:'w',txt:'I can fix this within 1 hour.\n💰 Estimate: ₹350–450\n⏱ Arrival: 45 min',t:'2:23 PM',estimate:true},
+  {from:'u',txt:'Can you come at 3 PM today?',t:'2:24 PM'},
+];
+
+const STEPS = [
+  {label:'Request Sent',em:'📤',done:true},
+  {label:'Worker Accepted',em:'✅',done:true},
+  {label:'Scheduled',em:'📅',done:true},
+  {label:'Worker on the Way',em:'🚗',done:true,active:true},
+  {label:'Work in Progress',em:'🔧',done:false},
+  {label:'Completed',em:'🏁',done:false},
+  {label:'Payment Released',em:'💳',done:false},
+];
+
+/* ── Helpers ──────────────────────────────────── */
+function avatar(name, size, online, grad, extra='') {
+  const ini = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const fs = Math.round(size * .33);
+  let dot = '';
+  if (online === true) dot = `<div class="online-dot" style="width:${Math.round(size*.25)}px;height:${Math.round(size*.25)}px;bottom:1px;right:1px"></div>`;
+  else if (online === false) dot = `<div class="offline-dot" style="width:${Math.round(size*.25)}px;height:${Math.round(size*.25)}px;bottom:1px;right:1px;background:var(--txm)"></div>`;
+  return `<div class="avatar" style="width:${size}px;height:${size}px;background:${grad};font-size:${fs}px;${extra}">${ini}${dot}</div>`;
+}
+
+function pill(txt, col) {
+  return `<span class="pill" style="background:${col}1E;border:1px solid ${col}3A;color:${col}">${txt}</span>`;
+}
+
+function stars(r, sz=13) {
+  return `<div class="stars">${[1,2,3,4,5].map(i=>`<span class="star" style="font-size:${sz}px;color:${i<=Math.round(r)?'var(--amber)':'var(--txm)'}">${i<=r?'★':'☆'}</span>`).join('')}</div>`;
+}
+
+function divider() { return '<div class="div"></div>'; }
+
+function shead(title, action='', onClick='', large=false) {
+  return `<div class="sh"><span class="sh-title${large?' lg':''}">${title}</span>${action?`<span class="sh-action" onclick="${onClick}">${action}</span>`:''}</div>`;
+}
+
+function toggle(id, on) {
+  return `<div class="toggle" id="${id}" onclick="toggleHandler('${id}')" style="background:${on?'var(--green)':'rgba(255,255,255,.08)'};border:1px solid ${on?'var(--green)':'var(--bw)'}"><div class="toggle-thumb" style="left:${on?25:3}px"></div></div>`;
+}
+
+function progBar(pct, grad='var(--g2)') {
+  return `<div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${grad}"></div></div>`;
+}
+
+function gcard(inner, extra='', cls='') {
+  return `<div class="gcard ${cls}" style="${extra}">${inner}</div>`;
+}
+
+function btn(txt, cls='btn-g1', extra='', onClick='') {
+  return `<button class="btn ${cls}" style="${extra}" onclick="${onClick}">${txt}</button>`;
+}
+
+function ghostBtn(txt, extra='', onClick='') {
+  return `<button class="btn-ghost" style="${extra}" onclick="${onClick}">${txt}</button>`;
+}
+
+/* ── Navigate ─────────────────────────────────── */
+function go(screen) {
+  state.screen = screen;
+  render();
+  document.getElementById('content').scrollTop = 0;
+}
+
+function toggleHandler(id) {
+  if (id === 'toggle-urgent') { state.bookUrgent = !state.bookUrgent; renderContent(); }
+  if (id === 'toggle-avail') { state.dashAvail = !state.dashAvail; renderContent(); }
+}
+
+/* ── Render Shell ─────────────────────────────── */
+function renderShell() {
+  // Sidebar avatar
+  document.getElementById('sidebar-avatar').innerHTML = avatar('Arjun Dev', 38, true, C.g1);
+  // Topbar avatar
+  document.getElementById('topbar-avatar').innerHTML = avatar('Arjun Dev', 38, undefined, C.g1);
+  // Nav
+  document.getElementById('nav').innerHTML = NAV_ITEMS.map(n =>
+    `<div class="nav-item${state.screen===n.id?' active':''}" onclick="go('${n.id}')">
+      <span style="font-size:15px">${n.em}</span><span>${n.lbl}</span>
+      ${n.badge?`<span class="badge">${n.badge}</span>`:''}
+    </div>`
+  ).join('');
+}
+
+function renderTopbar() {
+  const m = META[state.screen] || {title:state.screen, sub:''};
+  document.getElementById('page-title').textContent = m.title;
+  document.getElementById('page-sub').textContent = m.sub;
+}
+
+function renderContent() {
+  const c = document.getElementById('content');
+  const renderers = {
+    Home, Workers, Chat, Booking, Tracking, Payment, Negotiation, Rating, Dashboard, Admin
+  };
+  const fn = renderers[state.screen];
+  c.innerHTML = `<div class="screen" style="min-height:100%">${fn ? fn() : ''}</div>`;
+  bindEvents();
+}
+
+function render() {
+  renderShell();
+  renderTopbar();
+  renderContent();
+}
+
+function bindEvents() {
+  // Payment methods
+  document.querySelectorAll('.pay-method').forEach(el => {
+    el.addEventListener('click', () => {
+      state.payMethod = el.dataset.method;
+      renderContent();
+    });
+  });
+  // Book date
+  document.querySelectorAll('.date-btn').forEach(el => {
+    el.addEventListener('click', () => { state.bookDate = +el.dataset.d; renderContent(); });
+  });
+  // Book time
+  document.querySelectorAll('.time-btn').forEach(el => {
+    el.addEventListener('click', () => { state.bookTime = el.dataset.t; renderContent(); });
+  });
+  // Stars
+  document.querySelectorAll('.star-btn').forEach(el => {
+    el.addEventListener('click', () => { state.stars = +el.dataset.s; renderContent(); });
+  });
+  // Review tags
+  document.querySelectorAll('.rev-tag').forEach(el => {
+    el.addEventListener('click', () => {
+      const t = el.dataset.tag;
+      state.reviewTags.has(t) ? state.reviewTags.delete(t) : state.reviewTags.add(t);
+      renderContent();
+    });
+  });
+  // Worker list click
+  document.querySelectorAll('.wlist-item').forEach(el => {
+    el.addEventListener('click', () => { state.workerSel = +el.dataset.w; renderContent(); });
+  });
+  // Worker tabs
+  document.querySelectorAll('.wtab').forEach(el => {
+    el.addEventListener('click', () => { state.workerTab = el.dataset.t; renderContent(); });
+  });
+  // Dash tabs
+  document.querySelectorAll('.dtab').forEach(el => {
+    el.addEventListener('click', () => { state.dashTab = el.dataset.t; renderContent(); });
+  });
+  // Admin tabs
+  document.querySelectorAll('.atab').forEach(el => {
+    el.addEventListener('click', () => { state.adminTab = el.dataset.t; renderContent(); });
+  });
+  // Cat filter
+  document.querySelectorAll('.cat-filter').forEach(el => {
+    el.addEventListener('click', () => { state.catFilter = el.dataset.c; renderContent(); });
+  });
+  // Neg counter
+  const negInput = document.getElementById('neg-input');
+  if (negInput) negInput.addEventListener('input', e => { state.negCounter = e.target.value; });
+  document.querySelectorAll('.neg-quick').forEach(el => {
+    el.addEventListener('click', () => { state.negCounter = el.dataset.p; renderContent(); });
+  });
+  // Review textarea
+  const revText = document.getElementById('rev-text');
+  if (revText) revText.addEventListener('input', e => {
+    state.reviewTxt = e.target.value;
+    const cnt = document.getElementById('rev-count');
+    if (cnt) cnt.textContent = e.target.value.length + '/500 chars';
+  });
+  // Chat input
+  const chatInput = document.getElementById('chat-input');
+  if (chatInput) chatInput.addEventListener('keydown', e => {
+    if (e.key==='Enter') { state.chatMsg = ''; }
+  });
+}
+
+/* ══════════════════════════════════════════════
+   SCREENS
+══════════════════════════════════════════════ */
+
+function Home() {
+  const stats = [
+    {l:'Services Booked',v:'24',em:'📋',col:C.cyan},
+    {l:'Money Saved',v:'₹3.2K',em:'💰',col:C.green},
+    {l:'Fav Workers',v:'6',em:'❤️',col:C.red},
+    {l:'Avg Rating',v:'4.8',em:'⭐',col:C.amber},
+  ];
+  const recent = [
+    {svc:'Pipe Leak Fix',worker:'Rajesh Kumar',status:'In Progress',price:'₹450',em:'🔧',col:C.green,pct:60},
+    {svc:'Room Painting',worker:'Meena Patel',status:'Completed',price:'₹2,200',em:'🖌️',col:C.cyan,pct:100},
+  ];
+
+  return `
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-scan"></div>
+    <div style="position:absolute;top:-60px;right:-60px;width:300px;height:300px;border-radius:50%;background:rgba(0,212,255,.06);filter:blur(60px);pointer-events:none"></div>
+    <div style="position:absolute;bottom:-40px;left:40%;width:200px;height:200px;border-radius:50%;background:rgba(123,47,255,.08);filter:blur(50px);pointer-events:none"></div>
+    <div style="position:relative;max-width:600px">
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        ${pill('📍 MEERUT, UP', C.cyan)}
+        ${pill('✦ AI-POWERED MATCHING', C.green)}
+      </div>
+      <h2 style="font-family:var(--fh);font-weight:900;font-size:34px;color:var(--tx);line-height:1.15;margin-bottom:12px">
+        Book trusted home services<br>
+        <span style="background:var(--g1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">instantly near you</span>
+      </h2>
+      <p style="color:var(--txs);font-size:15px;margin-bottom:22px;line-height:1.65">
+        Verified professionals for plumbing, electrical, cleaning, AC repair and more — with live tracking and secure escrow payments.
+      </p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        ${btn('Browse Services →','btn-g1','padding:13px 28px;font-size:15px',"go('Workers')")}
+        ${ghostBtn('Upload Photo for AI Quote ✦','padding:13px 22px;font-size:15px',"go('Chat')")}
+      </div>
+    </div>
+    <div class="float" style="position:absolute;right:44px;top:50%;transform:translateY(-50%);font-size:80px;opacity:.8">🏠</div>
+  </div>
+
+  <!-- SEARCH -->
+  <div style="padding:0 32px 24px">
+    <div style="background:var(--glass);border:1px solid var(--border);border-radius:16px;display:flex;align-items:center;gap:12px;padding:13px 18px;box-shadow:0 0 30px rgba(0,212,255,.07)">
+      <span style="font-size:18px;opacity:.6">🔍</span>
+      <input class="inp" placeholder="Search 'electrician near me', 'AC repair', 'deep cleaning'…" style="flex:1;border:none;background:none;font-size:14px;padding:0">
+      <div style="padding:8px 18px;border-radius:11px;background:var(--g1);color:#fff;font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.04em">AI Search ✦</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div style="padding:0 32px 24px">
+    <div class="g4">
+      ${stats.map(s=>`
+      <div class="gcard" style="padding:18px 20px;border:1px solid ${s.col}18;text-align:center">
+        <div style="font-size:26px;margin-bottom:8px">${s.em}</div>
+        <div style="font-family:var(--fh);font-weight:900;font-size:24px;color:${s.col};margin-bottom:4px">${s.v}</div>
+        <div style="font-size:11px;color:var(--txm);font-weight:600">${s.l}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- TWO-COL SECTION -->
+  <div style="padding:0 32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <!-- Categories -->
+    <div>
+      ${shead('Service Categories','View All →','go(\'Workers\')',true)}
+      <div class="g4s">
+        ${CATS.map(c=>`
+        <div class="cat-card" onclick="go('Workers')">
+          <div style="width:48px;height:48px;border-radius:14px;background:${c.col}18;border:1px solid ${c.col}40;display:flex;align-items:center;justify-content:center;font-size:24px">${c.em}</div>
+          <span style="font-size:11px;color:var(--txs);font-weight:700;text-align:center">${c.label}</span>
+          <span style="font-size:10px;color:var(--txm);text-align:center;line-height:1.3">${c.desc}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Recent bookings -->
+    <div>
+      ${shead('Recent Bookings','All Orders →','go(\'Tracking\')',true)}
+      <div class="flex-col">
+        ${recent.map(r=>`
+        <div class="gcard clickable hoverable" style="padding:16px 18px" onclick="go('Tracking')">
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="width:50px;height:50px;border-radius:14px;flex-shrink:0;background:${r.col}18;border:1px solid ${r.col}40;display:flex;align-items:center;justify-content:center;font-size:24px">${r.em}</div>
+            <div style="flex:1">
+              <div style="font-family:var(--fh);font-weight:700;font-size:16px;color:var(--tx);margin-bottom:3px">${r.svc}</div>
+              <div style="font-size:12px;color:var(--txm)">${r.worker} • Today</div>
+            </div>
+            <div style="text-align:right">
+              ${pill(r.status, r.status==='In Progress'?C.amber:C.green)}
+              <div style="font-family:var(--fh);font-weight:800;font-size:16px;color:var(--tx);margin-top:6px">${r.price}</div>
+            </div>
+          </div>
+          ${r.pct<100?`<div style="margin-top:12px">${progBar(r.pct)}<div style="display:flex;justify-content:space-between;margin-top:5px"><span style="font-size:11px;color:var(--txm)">Worker on the way</span><span style="font-size:11px;color:var(--green);font-weight:700">${r.pct}% done</span></div></div>`:''}
+        </div>`).join('')}
+        ${btn('+ Book New Service','btn-g1','width:100%;margin-top:4px',"go('Booking')")}
+      </div>
+    </div>
+  </div>
+
+  <!-- TOP WORKERS -->
+  <div style="padding:0 32px 32px">
+    ${shead('Top Rated Workers Near You','See All Workers →','go(\'Workers\')',true)}
+    <div class="g3">
+      ${WORKERS.slice(0,3).map(w=>`
+      <div class="gcard hoverable clickable worker-card" onclick="go('Workers')">
+        <div style="display:flex;gap:13px;margin-bottom:14px;align-items:flex-start">
+          ${avatar(w.name,54,w.online,w.grad)}
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:6px">
+              <span style="font-family:var(--fh);font-weight:700;font-size:16px;color:var(--tx)">${w.name}</span>
+              ${w.v?'<span>✅</span>':''}
+            </div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              ${pill(w.cat,C.cyan)}${pill(w.exp+'y exp',C.green)}
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:10px">
+          ${stars(w.rating)}
+          <span style="font-size:14px;color:var(--amber);font-weight:800">${w.rating}</span>
+          <span style="font-size:12px;color:var(--txm)">${w.jobs} jobs</span>
+        </div>
+        <div class="div"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-size:14px;font-weight:700;color:var(--cyan)">${w.price}/hr</div>
+          ${btn('Book Now','btn-g1 btn-sm','',`go('Booking')`)}
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function Workers() {
+  const filters = [['all','All Workers'],['plumber','Plumbers'],['clean','Cleaners'],['electric','Electricians'],['paint','Painters'],['carpet','Carpenters']];
+  const filtered = state.catFilter==='all' ? WORKERS : WORKERS.filter(w=>w.cat.toLowerCase().includes(state.catFilter));
+  const w = WORKERS[state.workerSel];
+  const skills = ['Leak Detection','Pipe Fitting','Water Heater','Drainage','Tap Repair','Bathroom Fitting'];
+  const revs = [
+    {name:'Suresh M.',r:5,txt:'Excellent work! Fixed the leak very quickly and cleanly.',t:'2d ago'},
+    {name:'Anita K.',r:4,txt:'Professional, on time, and reasonably priced.',t:'5d ago'},
+    {name:'Ramesh P.',r:5,txt:'Best in town. Highly recommend!',t:'1w ago'},
+  ];
+
+  let detailContent = '';
+  if (state.workerTab==='about') {
+    detailContent = `
+      <div class="g3" style="margin-bottom:12px">
+        ${[['💼',w.jobs,'Jobs'],['💰',w.price,'Price'],['⚡','<10m','Response']].map(([em,v,l])=>`
+        <div class="gcard" style="padding:12px 8px;text-align:center">
+          <div style="font-size:18px">${em}</div>
+          <div style="font-family:var(--fh);font-weight:800;font-size:13px;color:var(--cyan);margin:5px 0 2px">${v}</div>
+          <div style="font-size:10px;color:var(--txm)">${l}</div>
+        </div>`).join('')}
+      </div>
+      <div class="gcard" style="border:1px solid rgba(0,229,160,.33);margin-bottom:12px">
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="font-size:20px">🏛️</span>
+          <div><div style="font-size:12px;color:var(--txm)">KYC Verified</div><div style="font-size:13px;color:var(--green);font-weight:700">Aadhaar + Police Verification ✓</div></div>
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">${skills.map(s=>pill(s,C.cyan)).join('')}</div>
+      <div style="display:flex;gap:9px">
+        ${btn('📅 Book','btn-g1','flex:1',"go('Booking')")}
+        ${ghostBtn('💬 Chat','flex:1',"go('Chat')")}
+      </div>`;
+  } else if (state.workerTab==='reviews') {
+    detailContent = revs.map((rv,i)=>`
+      <div class="gcard" style="margin-bottom:10px">
+        <div style="display:flex;gap:9px;margin-bottom:8px;align-items:center">
+          ${avatar(rv.name,32,undefined,[C.g2,C.g4,C.g1][i])}
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--tx)">${rv.name}</div>
+            <div style="display:flex;gap:5px;align-items:center;margin-top:2px">${stars(rv.r,11)}<span style="font-size:10px;color:var(--txm)">${rv.t}</span></div>
+          </div>
+        </div>
+        <p style="margin:0;font-size:12px;color:var(--txs);line-height:1.6">${rv.txt}</p>
+      </div>`).join('');
+  } else {
+    detailContent = `<div class="g2">${['🚿','🔩','🪣','🛁'].map((em,i)=>`
+      <div style="aspect-ratio:1;border-radius:14px;cursor:pointer;background:${['#00D4FF12','#7B2FFF12','#00E5A012','#FF6B3512'][i]};border:1px solid var(--bw);display:flex;align-items:center;justify-content:center;font-size:44px">${em}</div>`).join('')}</div>`;
+  }
+
+  return `
+  <div style="display:flex;min-height:calc(100vh - 67px)">
+    <!-- Left panel -->
+    <div style="flex:1;padding:24px 24px 24px 32px;min-width:0;border-right:1px solid var(--bw)">
+      <!-- Filters -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px">
+        ${filters.map(([id,lbl])=>`<button class="cat-filter btn btn-sm" data-c="${id}" style="background:${state.catFilter===id?'var(--g1)':'rgba(255,255,255,.06)'};border:1px solid ${state.catFilter===id?'transparent':'var(--bw)'};color:${state.catFilter===id?'#fff':'var(--txs)'}">${lbl}</button>`).join('')}
+      </div>
+      <!-- Search -->
+      <div style="background:var(--glass);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:18px">
+        <span style="opacity:.5">🔍</span>
+        <input class="inp" placeholder="Search workers, skills…" style="flex:1;border:none;background:none;font-size:13px;padding:0">
+      </div>
+      <!-- Worker list -->
+      <div class="flex-col">
+        ${filtered.map(w2=>`
+        <div class="gcard hoverable clickable wlist-item" data-w="${w2.id}" style="padding:16px 18px;border-color:${state.workerSel===w2.id?'var(--cyan)':'var(--bw)'};background:${state.workerSel===w2.id?'var(--cdim)':'var(--card)'}">
+          <div style="display:flex;gap:12px;align-items:center">
+            ${avatar(w2.name,50,w2.online,w2.grad)}
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;gap:5px;align-items:center;margin-bottom:5px;flex-wrap:wrap">
+                <span style="font-family:var(--fh);font-weight:700;font-size:15px;color:var(--tx)">${w2.name}</span>${w2.v?'<span>✅</span>':''}
+              </div>
+              <div style="display:flex;gap:5px;align-items:center;flex-wrap:wrap">
+                ${pill(w2.cat,C.cyan)}${pill(w2.online?'● Online':'Offline',w2.online?C.green:'rgba(255,255,255,.3)')}
+                <span style="font-size:11px;color:var(--txm)">📍${w2.city}</span>
+              </div>
+            </div>
+            <div style="text-align:right;flex-shrink:0">
+              <div style="display:flex;gap:4px;justify-content:flex-end;align-items:center;margin-bottom:4px">${stars(w2.rating,11)}<span style="font-size:12px;color:var(--amber);font-weight:800">${w2.rating}</span></div>
+              <div style="font-size:13px;color:var(--cyan);font-weight:700">${w2.price}</div>
+            </div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Right detail panel -->
+    <div style="width:380px;flex-shrink:0;padding:24px;overflow-y:auto">
+      <div style="text-align:center;margin-bottom:20px;padding:24px 20px;background:linear-gradient(180deg,rgba(0,212,255,.05),transparent);border-radius:20px;border:1px solid var(--border)">
+        ${avatar(w.name,80,w.online,w.grad,'margin:0 auto')}
+        <div style="display:flex;justify-content:center;gap:6px;margin-top:12px;align-items:center;flex-wrap:wrap">
+          <span style="font-family:var(--fh);font-weight:800;font-size:20px;color:var(--tx)">${w.name}</span>${w.v?'<span style="font-size:18px">✅</span>':''}
+        </div>
+        <div style="display:flex;justify-content:center;gap:7px;margin-top:8px;flex-wrap:wrap">
+          ${pill(w.cat,C.cyan)}${pill(w.exp+'y Exp',C.green)}${pill(w.online?'● Online':'Offline',w.online?C.green:'rgba(255,255,255,.3)')}
+        </div>
+        <div style="display:flex;justify-content:center;gap:6px;margin-top:10px;align-items:center">${stars(w.rating)}<span style="color:var(--amber);font-weight:800">${w.rating}</span><span style="color:var(--txm);font-size:13px">(${w.jobs} jobs)</span></div>
+      </div>
+      <!-- Worker tabs -->
+      <div style="display:flex;gap:4px;margin-bottom:16px">
+        ${['about','reviews','portfolio'].map(t=>`<button class="wtab btn btn-sm" data-t="${t}" style="flex:1;background:${state.workerTab===t?'var(--g1)':'rgba(255,255,255,.05)'};border:none;color:${state.workerTab===t?'#fff':'var(--txs)'};text-transform:capitalize">${t}</button>`).join('')}
+      </div>
+      ${detailContent}
+    </div>
+  </div>`;
+}
+
+function Chat() {
+  const contacts = [
+    {name:'Rajesh Kumar',cat:'Plumber',last:'Estimate sent: ₹350–450',t:'2:23 PM',unread:2,online:true,grad:C.g1},
+    {name:'Priya Sharma',cat:'Cleaner',last:'See you tomorrow at 10 AM',t:'1:15 PM',unread:0,online:true,grad:C.g2},
+    {name:'Amit Singh',cat:'Electrician',last:'Job completed ✓',t:'Yesterday',unread:0,online:false,grad:C.g4},
+  ];
+  const presets = ['What is the problem?','Share your location','Is it urgent?','Need photos?'];
+
+  return `
+  <div style="display:flex;height:calc(100vh - 67px)">
+    <!-- Contacts -->
+    <div style="width:300px;flex-shrink:0;border-right:1px solid var(--bw);display:flex;flex-direction:column">
+      <div style="padding:18px 18px 12px;border-bottom:1px solid var(--bw)">
+        <div style="background:var(--glass);border:1px solid var(--bw);border-radius:11px;display:flex;align-items:center;gap:8px;padding:8px 12px">
+          <span style="opacity:.5;font-size:14px">🔍</span>
+          <input class="inp" placeholder="Search chats…" style="flex:1;border:none;background:none;font-size:13px;padding:0">
+        </div>
+      </div>
+      ${contacts.map((c,i)=>`
+      <div style="padding:14px 18px;border-bottom:1px solid var(--bw);cursor:pointer;background:${i===0?'rgba(0,212,255,.06)':'transparent'};transition:background .2s" onmouseenter="this.style.background='rgba(0,212,255,.04)'" onmouseleave="this.style.background='${i===0?'rgba(0,212,255,.06)':'transparent'}'">
+        <div style="display:flex;gap:10px;align-items:center">
+          ${avatar(c.name,44,c.online,c.grad)}
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+              <span style="font-weight:700;font-size:14px;color:var(--tx)">${c.name}</span>
+              <span style="font-size:11px;color:var(--txm)">${c.t}</span>
+            </div>
+            <div style="font-size:11px;color:var(--txm);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.last}</div>
+          </div>
+          ${c.unread?`<div style="width:20px;height:20px;border-radius:50%;background:var(--cyan);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#00060d;flex-shrink:0">${c.unread}</div>`:''}
+        </div>
+      </div>`).join('')}
+    </div>
+
+    <!-- Chat area -->
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0">
+      <!-- Header -->
+      <div style="padding:14px 24px;border-bottom:1px solid var(--bw);display:flex;align-items:center;gap:12px;background:var(--surf1)">
+        ${avatar('Rajesh Kumar',42,true,C.g1)}
+        <div style="flex:1">
+          <div style="font-family:var(--fh);font-weight:700;font-size:16px;color:var(--tx)">Rajesh Kumar</div>
+          <div style="display:flex;gap:5px;align-items:center">
+            <div style="width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 2s infinite"></div>
+            <span style="font-size:12px;color:var(--green);font-weight:600">Online • Plumber</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          ${['📞','📹','⋯'].map(ic=>`<div class="icon-btn">${ic}</div>`).join('')}
+        </div>
+      </div>
+      <!-- Quick presets -->
+      <div style="padding:10px 20px;border-bottom:1px solid var(--bw);display:flex;gap:8px;flex-wrap:wrap;background:var(--glass)">
+        <span style="font-size:11px;color:var(--txm);align-self:center;font-weight:600">Quick:</span>
+        ${presets.map(p=>`<div style="padding:5px 13px;border-radius:20px;cursor:pointer;background:var(--cdim);border:1px solid var(--border);color:var(--cyan);font-size:12px;font-weight:600;transition:all .2s" onmouseenter="this.style.background='rgba(0,212,255,.2)'" onmouseleave="this.style.background='var(--cdim)'">${p}</div>`).join('')}
+      </div>
+      <!-- Messages -->
+      <div style="flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:12px">
+        ${MSGS.map(m => {
+          if (m.from==='sys') return `<div class="bubble-sys">${m.txt}</div>`;
+          const isU = m.from==='u';
+          return `<div style="display:flex;flex-direction:column;align-items:${isU?'flex-end':'flex-start'};gap:4px">
+            <div class="${isU?'bubble-me':'bubble-them'}">${m.txt}${m.estimate?`
+              <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.2);display:flex;gap:8px">
+                ${btn('Counter Offer','','flex:1;padding:9px 0;border-radius:9px;font-size:12px;background:rgba(255,255,255,.16)',"go('Negotiation')")}
+                <button class="btn-success" style="flex:1;padding:9px 0;font-size:12px" onclick="go('Booking')">Accept ✓</button>
+              </div>`:''}
+            </div>
+            ${m.t?`<span style="font-size:11px;color:var(--txm)">${m.t}</span>`:''}
+          </div>`;
+        }).join('')}
+      </div>
+      <!-- Input -->
+      <div style="padding:14px 24px;border-top:1px solid var(--bw);background:var(--surf1)">
+        <div style="display:flex;gap:10px;align-items:center;background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:10px 14px">
+          ${['📷','📎','🎙️'].map(ic=>`<span style="cursor:pointer;font-size:18px;opacity:.6">${ic}</span>`).join('')}
+          <input id="chat-input" class="inp" placeholder="Type a message…" style="flex:1;border:none;background:none;font-size:14px;padding:0">
+          <div style="width:38px;height:38px;border-radius:11px;background:var(--g1);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px">↗</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function Booking() {
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const dates = [13,14,15,16,17,18,19];
+  const times = ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM'];
+  const total = state.bookUrgent ? 579 : 479;
+
+  return `
+  <div style="padding:28px 32px;display:grid;grid-template-columns:1fr 380px;gap:24px">
+    <!-- Left form -->
+    <div class="flex-col">
+      <!-- Service -->
+      <div class="gcard" style="border:1px solid var(--border)">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div style="width:60px;height:60px;border-radius:16px;background:var(--cdim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:30px">🔧</div>
+          <div style="flex:1">
+            <div style="font-family:var(--fh);font-weight:800;font-size:20px;color:var(--tx)">Pipe Leak Repair</div>
+            <div style="font-size:13px;color:var(--txm);margin-top:3px">Plumbing • Rajesh Kumar • KYC Verified ✅</div>
+          </div>
+          ${btn('Change Worker','btn-g1 btn-sm','','')}
+        </div>
+      </div>
+
+      <!-- Urgent -->
+      <div class="gcard">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="width:48px;height:48px;border-radius:14px;background:${state.bookUrgent?'rgba(255,56,96,.12)':'var(--glass)'};border:1px solid ${state.bookUrgent?'var(--red)':'var(--bw)'};display:flex;align-items:center;justify-content:center;font-size:24px">🚨</div>
+            <div>
+              <div style="font-weight:700;font-size:16px;color:var(--tx)">Urgent Booking</div>
+              <div style="font-size:12px;color:var(--txm);margin-top:2px">Worker dispatched within 60 minutes (+₹100 surge fee)</div>
+            </div>
+          </div>
+          ${toggle('toggle-urgent', state.bookUrgent)}
+        </div>
+      </div>
+
+      <!-- Date -->
+      <div class="gcard">
+        ${shead('Select Date')}
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          ${dates.map((d,i)=>`
+          <div class="date-btn" data-d="${d}" style="min-width:60px;border-radius:14px;padding:12px 8px;text-align:center;background:${state.bookDate===d?'var(--g1)':'var(--glass)'};border:1px solid ${state.bookDate===d?'transparent':'var(--bw)'};cursor:pointer;box-shadow:${state.bookDate===d?'0 6px 22px rgba(0,212,255,.25)':'none'}">
+            <div style="font-size:11px;color:${state.bookDate===d?'rgba(255,255,255,.7)':'var(--txm)'};margin-bottom:5px">${days[i]}</div>
+            <div style="font-size:20px;font-weight:800;font-family:var(--fh);color:#fff">${d}</div>
+            <div style="font-size:10px;color:${state.bookDate===d?'rgba(255,255,255,.6)':'var(--txm)'};margin-top:3px">Apr</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Time -->
+      <div class="gcard">
+        ${shead('Select Time Slot')}
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          ${times.map(t=>`
+          <div class="time-btn" data-t="${t}" style="padding:11px 0;border-radius:12px;text-align:center;cursor:pointer;background:${state.bookTime===t?'var(--g1)':'var(--glass)'};border:1px solid ${state.bookTime===t?'transparent':'var(--bw)'};font-size:13px;font-weight:700;color:${state.bookTime===t?'#fff':'var(--txs)'}">
+            ${t}
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Address -->
+      <div class="gcard">
+        ${shead('Service Address')}
+        <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:14px">
+          <span style="font-size:22px">📍</span>
+          <div style="flex:1">
+            <div style="font-weight:700;font-size:15px;color:var(--tx)">Plot 45, Shastri Nagar</div>
+            <div style="font-size:13px;color:var(--txm);margin-top:3px">Meerut, Uttar Pradesh 250002</div>
+          </div>
+          <span style="color:var(--cyan);font-size:13px;font-weight:700;cursor:pointer">Change →</span>
+        </div>
+        <div class="map-grid" style="height:140px;border-radius:14px;background:linear-gradient(135deg,#041422,#0C2840);border:1px solid var(--bw);display:flex;align-items:center;justify-content:center;position:relative">
+          <div style="width:44px;height:44px;border-radius:50%;background:var(--g1);display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 0 22px var(--cdim)">📍</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right summary -->
+    <div>
+      <div class="gcard" style="border:1px solid var(--border);position:sticky;top:90px">
+        <div style="font-family:var(--fh);font-weight:800;font-size:18px;color:var(--tx);margin-bottom:16px">Order Summary</div>
+        ${[['Service','Pipe Leak Repair'],['Worker','Rajesh Kumar'],['Date',`April ${state.bookDate}, 2026`],['Time Slot',state.bookTime],['Service Charge','₹350–450'],['Platform Fee','₹29'],...(state.bookUrgent?[['Urgent Surcharge','₹100']]:[])]
+          .map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bw)"><span style="font-size:13px;color:var(--txm)">${k}</span><span style="font-size:13px;font-weight:700;color:${['Platform Fee','Urgent Surcharge'].includes(k)?'var(--amber)':'var(--tx)'}">${v}</span></div>`).join('')}
+        <div style="display:flex;justify-content:space-between;padding:14px 0 0">
+          <span style="font-family:var(--fh);font-weight:700;font-size:16px;color:var(--tx)">Estimated Total</span>
+          <span style="font-family:var(--fh);font-weight:900;font-size:22px;color:var(--cyan)">₹${total}</span>
+        </div>
+        <div class="gcard" style="margin-top:14px;border:1px solid rgba(0,229,160,.33);padding:12px 14px">
+          <div style="display:flex;gap:10px;align-items:center">
+            <span style="font-size:20px">🔐</span>
+            <div style="font-size:12px;color:var(--green);font-weight:600">Escrow Protection: payment held until job is confirmed complete</div>
+          </div>
+        </div>
+        ${btn('Confirm &amp; Pay →','btn-g1','width:100%;margin-top:16px;padding:14px;font-size:15px',"go('Payment')")}
+        ${ghostBtn('Ask Worker First','width:100%;margin-top:10px;padding:12px',"go('Chat')")}
+      </div>
+    </div>
+  </div>`;
+}
+
+function Tracking() {
+  return `
+  <div style="padding:28px 32px;display:grid;grid-template-columns:1fr 360px;gap:24px">
+    <!-- Left -->
+    <div class="flex-col">
+      <!-- Map -->
+      <div class="map-grid" style="border-radius:22px;height:340px;background:linear-gradient(135deg,#041422,#0C2840);border:1px solid var(--border);position:relative;overflow:hidden">
+        <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 600 340">
+          <line x1="0" y1="170" x2="600" y2="170" stroke="rgba(255,255,255,.04)" stroke-width="2"/>
+          <line x1="300" y1="0" x2="300" y2="340" stroke="rgba(255,255,255,.04)" stroke-width="2"/>
+          <path d="M 220 240 Q 370 200 490 130" stroke="${C.cyan}" stroke-width="2.5" stroke-dasharray="8,5" fill="none" opacity=".7"/>
+        </svg>
+        <!-- Worker marker -->
+        <div style="position:absolute;left:36%;top:65%;transform:translate(-50%,-50%);text-align:center">
+          <div class="pulse-online" style="width:52px;height:52px;border-radius:50%;background:var(--g1);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 24px var(--cdim)">🚗</div>
+          <div style="font-size:11px;color:var(--cyan);margin-top:4px;font-weight:700;background:rgba(0,0,0,.6);border-radius:6px;padding:2px 6px">RAJESH</div>
+        </div>
+        <!-- Home marker -->
+        <div style="position:absolute;left:62%;top:34%;transform:translate(-50%,-50%);text-align:center">
+          <div style="width:46px;height:46px;border-radius:50%;background:var(--gdim);border:3px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:22px">🏠</div>
+          <div style="font-size:11px;color:var(--green);margin-top:4px;font-weight:700;background:rgba(0,0,0,.6);border-radius:6px;padding:2px 6px">YOUR HOME</div>
+        </div>
+        <!-- ETA badge -->
+        <div style="position:absolute;top:18px;right:18px;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);border-radius:14px;padding:12px 18px;border:1px solid var(--border)">
+          <div style="font-size:12px;color:var(--txm)">Estimated Arrival</div>
+          <div style="font-family:var(--fh);font-weight:900;font-size:32px;color:var(--cyan);line-height:1">8 min</div>
+        </div>
+        <!-- Ref badge -->
+        <div style="position:absolute;top:18px;left:18px;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);border-radius:10px;padding:8px 14px;border:1px solid var(--bw)">
+          <div style="font-size:11px;color:var(--txm)">Booking</div>
+          <div style="font-family:var(--fh);font-weight:700;font-size:14px;color:var(--tx)">#HS-2026-1847</div>
+        </div>
+      </div>
+
+      <!-- Worker info -->
+      <div class="gcard" style="border:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:14px">
+          ${avatar('Rajesh Kumar',56,true,C.g1)}
+          <div style="flex:1">
+            <div style="font-family:var(--fh);font-weight:700;font-size:18px;color:var(--tx)">Rajesh Kumar</div>
+            <div style="font-size:13px;color:var(--txm);margin-top:3px">Plumber · ⭐ 4.9 · KA-01 AB 1234</div>
+          </div>
+          <div style="display:flex;gap:10px">
+            <button style="padding:10px 18px;border-radius:11px;border:1px solid rgba(0,229,160,.5);background:rgba(0,229,160,.1);color:var(--green);font-family:var(--fb);font-weight:700;cursor:pointer;font-size:13px">📞 Call</button>
+            <button style="padding:10px 18px;border-radius:11px;border:1px solid rgba(0,212,255,.5);background:var(--cdim);color:var(--cyan);font-family:var(--fb);font-weight:700;cursor:pointer;font-size:13px" onclick="go('Chat')">💬 Chat</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: steps -->
+    <div>
+      <div class="gcard">
+        ${shead('Job Progress','','' ,true)}
+        <div style="margin-bottom:16px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:13px;color:var(--txm)">Overall Progress</span>
+            <span style="font-size:13px;color:var(--green);font-weight:700">57%</span>
+          </div>
+          ${progBar(57)}
+        </div>
+        <div class="div"></div>
+        ${STEPS.map((s,i)=>`
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div style="display:flex;flex-direction:column;align-items:center;padding-top:4px">
+            <div style="width:36px;height:36px;border-radius:50%;background:${s.done?(s.active?'var(--g1)':'var(--gdim)'):'var(--glass)'};border:2px solid ${s.done?(s.active?'var(--cyan)':'var(--green)'):'var(--bw)'};display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;${s.active?'animation:pulse 2s infinite;box-shadow:0 0 18px var(--cdim)':''}">
+              ${s.em}
+            </div>
+            ${i<STEPS.length-1?`<div style="width:2px;height:28px;margin:4px auto;background:${s.done?'var(--g2)':'var(--bw)'};border-radius:2px"></div>`:''}
+          </div>
+          <div style="padding-top:8px;padding-bottom:${i<STEPS.length-1?0:0}px">
+            <div style="font-size:14px;font-weight:${s.active?700:500};color:${s.done?(s.active?'var(--cyan)':'var(--green)'):'var(--txm)'}">${s.label}</div>
+            ${s.active?`<div style="font-size:12px;color:var(--txm);margin-top:2px">Worker is 8 minutes away from your location</div>`:''}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+function Payment() {
+  if (state.payDone) return `
+  <div style="padding:60px 32px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh">
+    <div class="float" style="width:120px;height:120px;border-radius:50%;background:var(--gdim);border:4px solid var(--green);display:flex;align-items:center;justify-content:center;font-size:56px;box-shadow:0 0 60px var(--gdim);margin-bottom:28px">✅</div>
+    <h2 style="font-family:var(--fh);font-weight:900;font-size:36px;color:var(--tx);margin-bottom:12px;text-align:center">Payment Successful!</h2>
+    <p style="color:var(--txm);text-align:center;font-size:15px;line-height:1.7;margin-bottom:32px;max-width:480px">₹479 held securely in escrow. Released to Rajesh Kumar only after you confirm job completion.</p>
+    <div class="gcard" style="width:100%;max-width:440px;border:1px solid rgba(0,229,160,.33);margin-bottom:24px">
+      ${[['Transaction ID','#TXN-8842771'],['Payment Method','UPI · Google Pay'],['Amount Paid','₹479'],['Escrow Status','✅ Holding — Safe'],['Booking Ref','#HS-2026-1847']].map(([k,v])=>`
+      <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bw)">
+        <span style="font-size:13px;color:var(--txm)">${k}</span>
+        <span style="font-size:13px;font-weight:700;color:${k==='Escrow Status'?'var(--green)':'var(--tx)'}">${v}</span>
+      </div>`).join('')}
+    </div>
+    ${btn('Track Your Order →','btn-g1','padding:14px 36px;font-size:15px',"go('Tracking')")}
+  </div>`;
+
+  const methods = [
+    {id:'upi',label:'UPI Payment',sub:'GPay · PhonePe · Paytm · BHIM',em:'📱'},
+    {id:'card',label:'Credit / Debit Card',sub:'Visa · Mastercard · RuPay · Amex',em:'💳'},
+    {id:'wallet',label:'Fixify Wallet',sub:'Balance: ₹1,250 available',em:'👛'},
+  ];
+
+  return `
+  <div style="padding:28px 32px;display:grid;grid-template-columns:1fr 380px;gap:24px">
+    <div class="flex-col">
+      <!-- Escrow -->
+      <div class="gcard" style="border:1px solid rgba(0,229,160,.33);background:var(--gdim)">
+        <div style="display:flex;gap:14px;align-items:center">
+          <div style="font-size:36px">🔐</div>
+          <div>
+            <div style="font-family:var(--fh);font-weight:700;font-size:18px;color:var(--green)">Escrow Payment Protection</div>
+            <div style="font-size:13px;color:var(--txs);margin-top:4px;line-height:1.6">Your payment is held securely. Worker receives funds ONLY when you confirm job completion. 100% refund if worker doesn't show.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Methods -->
+      <div class="gcard">
+        ${shead('Choose Payment Method','','',true)}
+        <div class="flex-col">
+          ${methods.map(m=>`
+          <div class="pay-method" data-method="${m.id}" style="padding:16px 18px;border-radius:14px;cursor:pointer;background:${state.payMethod===m.id?'var(--cdim)':'var(--glass)'};border:1px solid ${state.payMethod===m.id?'var(--cyan)':'var(--bw)'};display:flex;gap:14px;align-items:center;transition:all .2s">
+            <span style="font-size:28px">${m.em}</span>
+            <div style="flex:1">
+              <div style="font-weight:700;font-size:15px;color:var(--tx)">${m.label}</div>
+              <div style="font-size:12px;color:var(--txm);margin-top:3px">${m.sub}</div>
+            </div>
+            <div style="width:22px;height:22px;border-radius:50%;border:2px solid ${state.payMethod===m.id?'var(--cyan)':'var(--bw)'};background:${state.payMethod===m.id?'var(--cyan)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              ${state.payMethod===m.id?'<div style="width:9px;height:9px;border-radius:50%;background:#fff"></div>':''}
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      ${state.payMethod==='card'?`
+      <div class="gcard">
+        ${shead('Card Details','','',true)}
+        <div class="flex-col">
+          ${[['Card Number','1234 5678 9012 3456'],['Cardholder Name','ARJUN DEV'],['Expiry','12/28'],['CVV','•••']].map(([l,p])=>`
+          <div><div style="font-size:12px;color:var(--txm);margin-bottom:6px;font-weight:600">${l}</div>
+          <div class="inp" style="padding:11px 14px;color:var(--txs)">${p}</div></div>`).join('')}
+        </div>
+      </div>`:''}
+    </div>
+
+    <!-- Summary -->
+    <div>
+      <div class="gcard" style="border:1px solid var(--border);position:sticky;top:90px">
+        <div style="text-align:center;padding:24px 0 16px;border-bottom:1px solid var(--bw);margin-bottom:16px">
+          <div style="font-size:14px;color:var(--txm);margin-bottom:8px;letter-spacing:.06em;font-weight:600">TOTAL AMOUNT</div>
+          <div style="font-family:var(--fh);font-weight:900;font-size:52px;color:var(--tx);line-height:1">₹479</div>
+          <div style="font-size:13px;color:var(--txm);margin-top:8px">Pipe Leak Repair • Rajesh Kumar</div>
+        </div>
+        ${[['Service Charge','₹450'],['Platform Fee','₹29']].map(([k,v])=>`
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--bw)">
+          <span style="font-size:13px;color:var(--txm)">${k}</span>
+          <span style="font-size:13px;font-weight:700;color:var(--tx)">${v}</span>
+        </div>`).join('')}
+        <div style="padding:12px 0;display:flex;gap:8px;align-items:center">
+          <div style="width:8px;height:8px;border-radius:50%;background:${state.payMethod==='upi'?C.cyan:state.payMethod==='card'?C.purple:C.green};flex-shrink:0;animation:pulse 2s infinite"></div>
+          <span style="font-size:13px;color:var(--txs)">Paying via ${state.payMethod==='upi'?'UPI':state.payMethod==='card'?'Card':'Wallet'}</span>
+        </div>
+        <button class="btn btn-g1" style="width:100%;padding:15px;font-size:15px" onclick="state.payDone=true;renderContent()">🔒 Pay ₹479 Securely</button>
+        <div style="text-align:center;margin-top:12px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          ${['🛡️ SSL Secure','✅ RBI Compliant','💰 Escrow Protected'].map(t=>`<span style="font-size:10px;color:var(--txm);font-weight:600">${t}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function Negotiation() {
+  return `
+  <div style="padding:28px 32px;display:grid;grid-template-columns:1fr 1fr;gap:24px">
+    <!-- Left -->
+    <div class="flex-col">
+      <!-- AI insight -->
+      <div class="gcard" style="border:1px solid rgba(255,181,71,.33);background:rgba(255,181,71,.06)">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div style="font-size:32px">🤖</div>
+          <div>
+            ${pill('AI Price Intelligence',C.amber)}
+            <div style="font-family:var(--fh);font-weight:700;font-size:17px;color:var(--tx);margin:8px 0 5px">Market Rate Analysis</div>
+            <div style="font-size:13px;color:var(--txs);line-height:1.7">Based on 1,247 similar jobs in Meerut, the fair rate for <strong style="color:var(--tx)">Pipe Leak Repair</strong> is:</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
+              ${[['Budget','₹300',C.green],['Average','₹400',C.cyan],['Premium','₹600',C.amber]].map(([l,v,col])=>`
+              <div class="gcard" style="padding:12px;text-align:center;border:1px solid ${col}33">
+                <div style="font-size:11px;color:var(--txm)">${l}</div>
+                <div style="font-family:var(--fh);font-weight:900;font-size:20px;color:${col}">${v}</div>
+              </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Worker offer -->
+      <div class="gcard" style="border:1px solid var(--border)">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+          ${avatar('Rajesh Kumar',44,undefined,C.g1)}
+          <div>
+            <div style="font-weight:700;font-size:15px;color:var(--tx)">Rajesh Kumar's Offer</div>
+            <div style="font-size:12px;color:var(--txm)">Pipe Leak Repair • 1–2 hrs • Includes parts</div>
+          </div>
+        </div>
+        <div style="font-family:var(--fh);font-weight:900;font-size:56px;color:var(--cyan);text-align:center;margin:10px 0">₹450</div>
+        <div style="text-align:center;font-size:13px;color:var(--txm);margin-bottom:16px">Includes parts + labour + 30-day warranty</div>
+        ${state.negStage==='offer'?`
+        <div style="display:flex;gap:12px">
+          ${ghostBtn('Counter Offer','flex:1',"state.negStage='counter';renderContent()")}
+          ${btn('Accept ✓','btn-g1','flex:1',"state.negStage='agreed';renderContent()")}
+        </div>`:pill('✅ Offer Viewed',C.green)}
+      </div>
+
+      <!-- Tips -->
+      ${state.negStage==='offer'?`
+      <div class="gcard">
+        ${shead('Negotiation Tips')}
+        ${['Workers usually accept 85–90% of their asking price','Be polite — workers are more flexible with friendly customers','Ultra-low offers (below ₹280) are often rejected','Consider value: Rajesh has ⭐ 4.9 and 312 completed jobs'].map((t,i,arr)=>`
+        <div style="display:flex;gap:10px;padding:8px 0;${i<arr.length-1?'border-bottom:1px solid var(--bw)':''}">
+          <span style="color:var(--cyan);font-size:14px;flex-shrink:0">→</span>
+          <span style="font-size:13px;color:var(--txs);line-height:1.5">${t}</span>
+        </div>`).join('')}
+      </div>`:''}
+    </div>
+
+    <!-- Right -->
+    <div class="flex-col">
+      ${state.negStage==='counter'?`
+      <div class="gcard" style="border:1px solid rgba(123,47,255,.55)">
+        <div style="font-family:var(--fh);font-weight:700;font-size:18px;color:var(--tx);margin-bottom:16px">Your Counter Offer</div>
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-size:28px;color:var(--txs);font-family:var(--fh);font-weight:700">₹</span>
+          <input id="neg-input" value="${state.negCounter}" style="flex:1;background:none;border:none;color:var(--tx);font-family:var(--fh);font-weight:900;font-size:48px;outline:none;width:100%">
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+          ${['280','300','350','380','400'].map(p=>`
+          <div class="neg-quick" data-p="${p}" style="flex:1 0 auto;padding:10px 0;border-radius:11px;text-align:center;background:${state.negCounter===p?'var(--cdim)':'var(--glass)'};border:1px solid ${state.negCounter===p?'var(--cyan)':'var(--bw)'};cursor:pointer;font-size:14px;font-weight:700;color:${state.negCounter===p?'var(--cyan)':'var(--txs)'}">₹${p}</div>`).join('')}
+        </div>
+        ${btn('Send Counter Offer →','btn-g4','width:100%;padding:14px',"state.negStage='agreed';renderContent()")}
+      </div>`:``}
+
+      ${state.negStage==='agreed'?`
+      <div class="gcard" style="border:1px solid rgba(0,229,160,.55);background:var(--gdim);text-align:center;padding:40px 24px">
+        <div class="float" style="font-size:60px;margin-bottom:16px">🤝</div>
+        <div style="font-family:var(--fh);font-weight:900;font-size:26px;color:var(--green);margin-bottom:8px">Deal Confirmed!</div>
+        <div style="font-family:var(--fh);font-weight:900;font-size:52px;color:var(--tx);margin-bottom:12px">₹${state.negCounter}</div>
+        <div style="font-size:14px;color:var(--txm);margin-bottom:8px">Final agreed price</div>
+        ${parseInt(state.negCounter)<450?pill('You saved ₹'+(450-parseInt(state.negCounter))+' 🎉',C.green):''}
+        <div style="margin-top:20px">${btn('Proceed to Secure Payment →','btn-g2','width:100%;padding:14px;font-size:15px',"go('Payment')")}</div>
+      </div>`:''}
+
+      ${state.negStage==='offer'?`
+      <div class="gcard" style="text-align:center;padding:40px 24px;border:1px solid var(--bw)">
+        <div style="font-size:60px;margin-bottom:16px;opacity:.3">🤝</div>
+        <div style="font-family:var(--fh);font-size:16px;color:var(--txm)">Review the worker's offer on the left, then accept or counter it</div>
+      </div>`:''}
+    </div>
+  </div>`;
+}
+
+function Rating() {
+  const tags = ['On Time','Professional','Clean Work','Good Value','Friendly','Expert','Would Rehire','Highly Recommended'];
+  const labels = ['','Terrible 😞','Bad 😕','Okay 😐','Good 😊','Excellent 🤩'];
+  return `
+  <div style="padding:28px 32px;display:grid;grid-template-columns:360px 1fr;gap:24px">
+    <!-- Left: worker card -->
+    <div>
+      <div class="gcard" style="text-align:center;padding:32px 24px;border:1px solid var(--border)">
+        <div style="display:flex;justify-content:center">${avatar('Rajesh Kumar',80,undefined,C.g1,'')}</div>
+        <div style="font-family:var(--fh);font-weight:800;font-size:22px;color:var(--tx);margin-top:14px">Rajesh Kumar</div>
+        <div style="font-size:13px;color:var(--txm);margin-top:4px">Plumber • April 15, 2026</div>
+        <div style="font-family:var(--fh);font-weight:700;font-size:16px;color:var(--cyan);margin-top:8px">Pipe Leak Repair • ₹380</div>
+        <div class="div"></div>
+        <div style="font-size:14px;color:var(--txs);font-weight:600;margin-bottom:14px">Tap to rate your experience</div>
+        <div style="display:flex;justify-content:center;gap:12px;margin-bottom:10px">
+          ${[1,2,3,4,5].map(i=>`
+          <span class="star-btn" data-s="${i}" style="font-size:38px;cursor:pointer;transition:all .15s;color:${i<=state.stars?'var(--amber)':'var(--txm)'};filter:${i<=state.stars?'drop-shadow(0 0 10px rgba(255,181,71,.7))':'none'};transform:${i===state.stars?'scale(1.2)':'scale(1)'}">★</span>`).join('')}
+        </div>
+        <div style="font-size:18px;color:var(--txs);font-weight:700">${labels[state.stars]}</div>
+      </div>
+    </div>
+
+    <!-- Right: form -->
+    <div class="flex-col">
+      <div class="gcard">
+        ${shead('Quick Tags','','',true)}
+        <div style="display:flex;flex-wrap:wrap;gap:9px">
+          ${tags.map(t=>`
+          <div class="rev-tag" data-tag="${t}" style="padding:9px 18px;border-radius:24px;cursor:pointer;background:${state.reviewTags.has(t)?'var(--cdim)':'var(--glass)'};border:1px solid ${state.reviewTags.has(t)?'var(--cyan)':'var(--bw)'};color:${state.reviewTags.has(t)?'var(--cyan)':'var(--txs)'};font-size:13px;font-weight:700;transition:all .15s">
+            ${t}
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="gcard">
+        ${shead('Write a Review','','',true)}
+        <textarea id="rev-text" class="inp" rows="5" placeholder="Share your experience to help other customers find great workers…">${state.reviewTxt}</textarea>
+        <div style="text-align:right;margin-top:6px;font-size:12px;color:var(--txm)" id="rev-count">${state.reviewTxt.length}/500 chars</div>
+      </div>
+
+      <div class="gcard">
+        ${shead('Attach Photo Proof (Optional)','','',true)}
+        <div style="border-radius:16px;border:2px dashed var(--bw);padding:32px;text-align:center;cursor:pointer;background:var(--glass);transition:border-color .2s" onmouseenter="this.style.borderColor='rgba(0,212,255,.4)'" onmouseleave="this.style.borderColor='var(--bw)'">
+          <div style="font-size:40px;margin-bottom:12px">📷</div>
+          <div style="font-size:15px;font-weight:700;color:var(--txs)">Upload photos of completed work</div>
+          <div style="font-size:12px;color:var(--txm);margin-top:5px">PNG, JPG or WEBP up to 10MB</div>
+        </div>
+      </div>
+
+      ${btn('Submit Review ✓','btn-g1','width:100%;padding:15px;font-size:15px',"go('Home')")}
+    </div>
+  </div>`;
+}
+
+function Dashboard() {
+  const jobs = [
+    {name:'Arjun Dev',svc:'Pipe Leak Repair',time:'Today 3:00 PM',price:450,loc:'Shastri Nagar',urgent:true},
+    {name:'Sunita Rao',svc:'Tap Fitting',time:'Today 5:00 PM',price:200,loc:'Civil Lines',urgent:false},
+    {name:'Rakesh Gupta',svc:'Bathroom Repair',time:'Tomorrow 10 AM',price:600,loc:'Cantonment',urgent:false},
+  ];
+  const earningsData = [{d:'Mon',v:60},{d:'Tue',v:85},{d:'Wed',v:45},{d:'Thu',v:95},{d:'Fri',v:70},{d:'Sat',v:110},{d:'Sun',v:55}];
+  const tabs = [['jobs','New Requests'],['earnings','Earnings'],['history','Job History'],['profile','Profile']];
+
+  let tabContent = '';
+  if (state.dashTab==='jobs') {
+    tabContent = `<div class="g3a">${jobs.map(j=>`
+    <div class="gcard" style="border:1px solid ${j.urgent?'rgba(255,181,71,.3)':'var(--bw)'};padding:20px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;gap:10px">
+          <div style="width:46px;height:46px;border-radius:13px;flex-shrink:0;background:var(--cdim);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px">🔧</div>
+          <div>
+            <div style="font-family:var(--fh);font-weight:700;font-size:16px;color:var(--tx)">${j.svc}</div>
+            <div style="font-size:12px;color:var(--txm);margin-top:2px">${j.name} · ${j.loc}</div>
+          </div>
+        </div>
+        ${j.urgent?pill('⚡ URGENT',C.amber):''}
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span style="font-size:12px;color:var(--txm)">📅 ${j.time}</span>
+        <span style="font-family:var(--fh);font-weight:900;font-size:22px;color:var(--cyan)">₹${j.price}</span>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-danger" style="flex:1">✕ Reject</button>
+        <button class="btn-success" style="flex:1">✓ Accept</button>
+      </div>
+    </div>`).join('')}</div>`;
+  } else if (state.dashTab==='earnings') {
+    tabContent = `<div class="g2">
+    <div class="gcard" style="border:1px solid rgba(0,229,160,.33)">
+      ${shead('Wallet Balance','','',true)}
+      <div style="font-family:var(--fh);font-weight:900;font-size:48px;color:var(--green);margin-bottom:8px">₹6,450</div>
+      <div style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:13px;color:var(--txm)">Monthly target: ₹30,000</span>
+          <span style="font-size:13px;color:var(--green);font-weight:700">72%</span>
+        </div>
+        ${progBar(72,'var(--g2)')}
+      </div>
+      ${btn('Withdraw to Bank','btn-g2','width:100%','')}
+    </div>
+    <div class="gcard">
+      ${shead('Last 7 Days','','',true)}
+      <div style="display:flex;align-items:flex-end;gap:8px;height:120px;margin-top:8px">
+        ${earningsData.map((d,i)=>`
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+          <div style="font-size:11px;color:${i===5?'var(--cyan)':'var(--txm)'};font-weight:700">₹${d.v*10}</div>
+          <div style="width:100%;height:${d.v}%;border-radius:5px 5px 0 0;background:${i===5?'var(--g2)':'linear-gradient(to top,var(--surf2),var(--card))'};border:${i!==5?'1px solid var(--bw)':'none'};border-bottom:none"></div>
+          <span style="font-size:11px;color:${i===5?'var(--cyan)':'var(--txm)'}">${d.d}</span>
+        </div>`).join('')}
+      </div>
+    </div>
+    </div>`;
+  } else if (state.dashTab==='history') {
+    tabContent = [
+      {svc:'Bathroom Pipe Repair',client:'Kavita S.',date:'Apr 14',price:'₹580',r:5},
+      {svc:'Leak Fix + Tap Replace',client:'Mohan D.',date:'Apr 13',price:'₹750',r:5},
+      {svc:'Drainage Unblock',client:'Sheela R.',date:'Apr 12',price:'₹300',r:4},
+      {svc:'Water Heater Install',client:'Arun P.',date:'Apr 10',price:'₹1,200',r:5},
+    ].map(j=>`
+    <div class="gcard hoverable" style="margin-bottom:12px;padding:16px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div style="width:44px;height:44px;border-radius:13px;background:var(--gdim);border:1px solid rgba(0,229,160,.44);display:flex;align-items:center;justify-content:center;font-size:20px">✅</div>
+          <div>
+            <div style="font-weight:700;font-size:15px;color:var(--tx)">${j.svc}</div>
+            <div style="font-size:12px;color:var(--txm);margin-top:2px">${j.client} • ${j.date}</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:var(--fh);font-weight:800;font-size:18px;color:var(--cyan)">${j.price}</div>
+          ${stars(j.r,11)}
+        </div>
+      </div>
+    </div>`).join('');
+  } else {
+    tabContent = `<div class="g2" style="max-width:700px">${[
+      ['📸','Update Profile Photo','Edit your worker profile picture',false],
+      ['📋','Manage Services','Add or remove service categories',false],
+      ['🏦','Bank Details','Update withdrawal account',false],
+      ['🎓','Add Certifications','Upload skill certificates',false],
+      ['⚙️','App Preferences','Notification & privacy settings',false],
+      ['🚪','Sign Out','Sign out of your account',true],
+    ].map(([em,lbl,desc,danger])=>`
+    <div class="gcard hoverable clickable" style="padding:18px 20px;display:flex;gap:14px;align-items:center">
+      <div style="width:44px;height:44px;border-radius:13px;flex-shrink:0;background:${danger?'rgba(255,56,96,.12)':'var(--glass)'};border:1px solid ${danger?'var(--red)':'var(--bw)'};display:flex;align-items:center;justify-content:center;font-size:20px">${em}</div>
+      <div><div style="font-weight:700;font-size:15px;color:${danger?'var(--red)':'var(--tx)'}">${lbl}</div><div style="font-size:12px;color:var(--txm);margin-top:2px">${desc}</div></div>
+      <span style="margin-left:auto;color:var(--txm);font-size:18px">›</span>
+    </div>`).join('')}</div>`;
+  }
+
+  return `
+  <!-- Worker header -->
+  <div style="padding:24px 32px;border-bottom:1px solid var(--bw);background:linear-gradient(135deg,rgba(0,212,255,.04),rgba(123,47,255,.06));display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+    ${avatar('Rajesh Kumar',64,state.dashAvail,C.g1)}
+    <div style="flex:1">
+      <div style="font-family:var(--fh);font-weight:900;font-size:24px;color:var(--tx)">Rajesh Kumar</div>
+      <div style="font-size:13px;color:var(--txm);margin-top:3px">Plumber · ⭐ 4.9 · Meerut, UP</div>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">${pill('✅ KYC Verified',C.green)}${pill('312 Jobs',C.cyan)}${pill('Top Rated',C.amber)}</div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center">
+      <div style="text-align:right;margin-right:4px">
+        <div style="font-size:12px;color:${state.dashAvail?'var(--green)':'var(--txm)'};font-weight:700">${state.dashAvail?'AVAILABLE FOR JOBS':'OFFLINE'}</div>
+        <div style="font-size:11px;color:var(--txm);margin-top:2px">Toggle availability</div>
+      </div>
+      ${toggle('toggle-avail', state.dashAvail)}
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div style="padding:24px 32px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+    ${[{l:"Today's Earnings",v:'₹1,240',em:'💰',col:C.green,ch:'+12%'},{l:'This Month',v:'₹28,500',em:'📈',col:C.cyan,ch:'+8%'},{l:'Active Jobs',v:'3',em:'⏳',col:C.amber,ch:''},{l:'Rating',v:'4.9 ⭐',em:'🏆',col:C.purple,ch:''}].map(s=>`
+    <div class="gcard" style="border:1px solid ${s.col}1A;padding:20px 22px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="font-size:28px">${s.em}</div>
+        ${s.ch?pill(s.ch,C.green):''}
+      </div>
+      <div style="font-family:var(--fh);font-weight:900;font-size:26px;color:${s.col};margin:10px 0 4px">${s.v}</div>
+      <div style="font-size:12px;color:var(--txm)">${s.l}</div>
+    </div>`).join('')}
+  </div>
+
+  <!-- Tabs -->
+  <div class="tab-bar">
+    ${tabs.map(([id,lbl])=>`<button class="tab-btn dtab${state.dashTab===id?' active':''}" data-t="${id}">${lbl}</button>`).join('')}
+  </div>
+
+  <div style="padding:24px 32px">${tabContent}</div>`;
+}
+
+function Admin() {
+  const pstats = [
+    {l:'Total Users',v:'12,450',em:'👥',col:C.cyan,ch:'+8.2%'},
+    {l:'Active Workers',v:'847',em:'👷',col:C.green,ch:'+12%'},
+    {l:'Jobs Today',v:'234',em:'⚡',col:C.purple,ch:'+5.1%'},
+    {l:'Revenue Today',v:'₹45.2K',em:'💰',col:C.amber,ch:'+18%'},
+    {l:'Escrow Held',v:'₹1.2L',em:'🔐',col:C.cyan,ch:''},
+    {l:'Commission (10%)',v:'₹4,520',em:'💹',col:C.green,ch:''},
+    {l:'Open Disputes',v:'7',em:'⚖️',col:C.red,ch:''},
+    {l:'Fraud Alerts',v:'2',em:'🛡️',col:C.amber,ch:''},
+  ];
+  const pending = [
+    {name:'Vikram Shah',cat:'Electrician',city:'Agra',id:'KYC-5891',date:'Apr 12',grad:C.g3},
+    {name:'Deepa Nair',cat:'Cleaner',city:'Meerut',id:'KYC-5892',date:'Apr 12',grad:C.g4},
+    {name:'Suraj Mehta',cat:'Plumber',city:'Noida',id:'KYC-5893',date:'Apr 11',grad:C.g5},
+    {name:'Renu Verma',cat:'Painter',city:'Delhi',id:'KYC-5894',date:'Apr 11',grad:C.g1},
+  ];
+  const chart = [{d:'Mon',v:52},{d:'Tue',v:68},{d:'Wed',v:41},{d:'Thu',v:85},{d:'Fri',v:62},{d:'Sat',v:92},{d:'Sun',v:74}];
+  const adminTabs = [['overview','Overview'],['workers','Workers KYC'],['analytics','Analytics'],['settings','Settings']];
+
+  let tabContent = '';
+  if (state.adminTab==='overview') {
+    tabContent = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px">
+      ${pstats.map(s=>`
+      <div class="gcard" style="border:1px solid ${s.col}18;padding:20px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+          <span style="font-size:24px">${s.em}</span>
+          ${s.ch?pill(s.ch,C.green):''}
+        </div>
+        <div style="font-family:var(--fh);font-weight:900;font-size:24px;color:${s.col};margin-bottom:4px">${s.v}</div>
+        <div style="font-size:11px;color:var(--txm);font-weight:600">${s.l}</div>
+      </div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 380px;gap:24px">
+      <div class="gcard">
+        ${shead('Weekly Revenue','','',true)}
+        <div style="display:flex;align-items:flex-end;gap:10px;height:130px;margin-top:8px">
+          ${chart.map((d,i)=>`
+          <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:5px">
+            <div style="font-size:11px;color:${i===5?'var(--cyan)':'var(--txm)'};font-weight:700">₹${(d.v*460).toLocaleString()}</div>
+            <div style="width:100%;height:${d.v}%;border-radius:6px 6px 0 0;background:${i===5?'var(--g1)':'linear-gradient(to top,var(--surf2),var(--card))'};border:${i!==5?'1px solid var(--bw)':'none'};border-bottom:none"></div>
+            <span style="font-size:11px;color:${i===5?'var(--cyan)':'var(--txm)'}">${d.d}</span>
+          </div>`).join('')}
+        </div>
+        <div class="div"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:13px;color:var(--txm)">Total this week</span>
+          <span style="font-family:var(--fh);font-weight:900;font-size:22px;color:var(--green)">₹2,14,600</span>
+        </div>
+      </div>
+      <div class="gcard">
+        ${shead('Jobs by Category','','',true)}
+        ${[['🔧','Plumbing',35,C.cyan],['⚡','Electrical',28,C.amber],['🧹','Cleaning',20,C.green],['❄️','AC Repair',12,C.purple],['🖌️','Painting',5,C.red]].map(([em,cat,pct,col])=>`
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+            <span style="font-size:13px;color:var(--txs)">${em} ${cat}</span>
+            <span style="font-size:13px;font-weight:700;color:${col}">${pct}%</span>
+          </div>
+          <div class="prog-track" style="height:6px"><div class="prog-fill" style="width:${pct}%;background:${col}"></div></div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  } else if (state.adminTab==='workers') {
+    tabContent = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div>
+        <div style="font-family:var(--fh);font-weight:700;font-size:20px;color:var(--tx)">KYC Pending Approvals</div>
+        <div style="font-size:13px;color:var(--txm);margin-top:3px">${pending.length} workers awaiting verification</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        ${ghostBtn('Bulk Approve','padding:9px 18px;font-size:12px','')}
+        ${btn('Export CSV','btn-g1 btn-sm','','')}
+      </div>
+    </div>
+    <div class="g3a">
+      ${pending.map(w=>`
+      <div class="gcard" style="border:1px solid rgba(255,181,71,.22);padding:20px">
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px">
+          ${avatar(w.name,50,undefined,w.grad)}
+          <div style="flex:1">
+            <div style="font-family:var(--fh);font-weight:700;font-size:16px;color:var(--tx)">${w.name}</div>
+            <div style="font-size:12px;color:var(--txm);margin-top:3px">${w.cat} · ${w.city}</div>
+            <div style="display:flex;gap:6px;margin-top:6px">${pill(w.id,C.amber)}${pill(w.date,'rgba(255,255,255,.3)')}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-danger" style="flex:1">✕ Reject</button>
+          <button class="btn-success" style="flex:1">✓ Approve</button>
+          <div class="icon-btn" style="flex-shrink:0">👁️</div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  } else if (state.adminTab==='analytics') {
+    tabContent = `<div class="g2">
+    ${[['Customer Signups','+234 this week','📈'],['Job Completion Rate','94.2%','✅'],['Avg Response Time','8.3 min','⚡'],['Refund Rate','1.2%','🔄']].map(([lbl,val,em])=>`
+    <div class="gcard" style="padding:28px 32px;border:1px solid var(--border)">
+      <div style="font-size:36px;margin-bottom:12px">${em}</div>
+      <div style="font-family:var(--fh);font-weight:900;font-size:38px;color:var(--cyan);margin-bottom:6px">${val}</div>
+      <div style="font-size:14px;color:var(--txm)">${lbl}</div>
+    </div>`).join('')}</div>`;
+  } else {
+    tabContent = `<div class="flex-col" style="max-width:600px">
+    ${[['💹','Commission Rate','10% per booking',true],['🔔','Push Notifications','Enabled for all events',false],['🛡️','Fraud Detection','AI monitoring active',false],['📣','Promotional Banners','3 active banners',false],['⚖️','Dispute Resolution','Auto-escalation after 48h',false],['🚨','Emergency Support','24/7 team online',false]].map(([em,lbl,desc,accent])=>`
+    <div class="gcard hoverable clickable" style="padding:18px 22px;display:flex;gap:14px;align-items:center">
+      <div style="width:46px;height:46px;border-radius:14px;flex-shrink:0;background:${accent?'var(--cdim)':'var(--glass)'};border:1px solid ${accent?'var(--cyan)':'var(--bw)'};display:flex;align-items:center;justify-content:center;font-size:22px">${em}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:15px;color:var(--tx)">${lbl}</div><div style="font-size:12px;color:var(--txm);margin-top:2px">${desc}</div></div>
+      <span style="color:var(--cyan);font-weight:700;font-size:14px">Edit →</span>
+    </div>`).join('')}</div>`;
+  }
+
+  return `
+  <!-- Admin tabs -->
+  <div class="tab-bar">
+    ${adminTabs.map(([id,lbl])=>`<button class="tab-btn atab${state.adminTab===id?' active':''}" data-t="${id}">${lbl}</button>`).join('')}
+  </div>
+  <div style="padding:28px 32px">${tabContent}</div>`;
+}
+
+/* ── Init ─────────────────────────────────── */
+render();
+</script>
+</body>
+</html>
